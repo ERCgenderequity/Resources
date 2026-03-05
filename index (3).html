@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pregnancy & Perinatal Resource Bank</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #fdf6ee; --warm-white: #fffbf5; --blush: #f2ddd3;
+      --dusty-rose: #d9a89a; --terracotta: #c07a68; --sage-light: #d6e3ce;
+      --brown: #6b4c3b; --text: #3d2b22; --text-soft: #7a5c50;
+      --card-bg: #fffaf6; --border: rgba(209,168,154,0.3);
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+    .page { max-width: 860px; margin: 0 auto; padding: 56px 24px 100px; }
+    .header { text-align: center; margin-bottom: 52px; }
+    .tag { display: inline-block; background: var(--sage-light); color: var(--brown); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; margin-bottom: 18px; }
+    .h1 { font-family: 'Lora', serif; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 500; color: var(--brown); line-height: 1.25; margin-bottom: 14px; }
+    .h1 em { color: var(--terracotta); font-style: italic; }
+    .subtitle { font-size: 15px; color: var(--text-soft); font-weight: 300; max-width: 440px; margin: 0 auto; line-height: 1.7; }
+    .divider { width: 40px; height: 2px; background: var(--dusty-rose); border-radius: 2px; margin: 22px auto 0; }
+    .search-wrap { margin-bottom: 36px; display: flex; justify-content: center; }
+    .search { width: 100%; max-width: 460px; padding: 12px 18px 12px 42px; border: 1.5px solid var(--blush); border-radius: 40px; background: var(--warm-white); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; transition: border-color 0.2s, box-shadow 0.2s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='7' stroke='%23c07a68' stroke-width='1.8'/%3E%3Cpath d='M20 20l-3-3' stroke='%23c07a68' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 15px center; }
+    .search::placeholder { color: var(--text-soft); opacity: 0.6; }
+    .search:focus { border-color: var(--dusty-rose); box-shadow: 0 0 0 3px rgba(192,122,104,0.1); }
+    .pills { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-bottom: 48px; }
+    .pill { padding: 6px 15px; border-radius: 20px; font-size: 12.5px; font-weight: 400; border: 1.5px solid var(--blush); cursor: pointer; transition: all 0.15s; background: var(--warm-white); color: var(--text-soft); font-family: 'DM Sans', sans-serif; }
+    .pill:hover { border-color: var(--dusty-rose); color: var(--terracotta); }
+    .pill.active { background: var(--terracotta); border-color: var(--terracotta); color: white; }
+    .pill.all-active { background: var(--brown); border-color: var(--brown); color: white; }
+    .section { margin-bottom: 48px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-head-left { display: flex; align-items: center; gap: 13px; }
+    .icon-wrap { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .section-title { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 500; color: var(--brown); }
+    .section-desc { font-size: 12.5px; color: var(--text-soft); font-weight: 300; margin-top: 2px; }
+    .section-actions { display: flex; gap: 6px; }
+    .link-grid { display: grid; gap: 9px; }
+    .link-card { display: flex; align-items: center; gap: 13px; background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 13px; padding: 15px 16px; color: inherit; transition: all 0.18s; }
+    .link-card.clickable { cursor: pointer; }
+    .link-card.clickable:hover { border-color: var(--dusty-rose); background: white; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(192,122,104,0.11); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .link-body { flex: 1; min-width: 0; }
+    .link-title { font-size: 13.5px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+    .link-desc { font-size: 12px; color: var(--text-soft); font-weight: 300; line-height: 1.5; }
+    .arrow { color: var(--dusty-rose); font-size: 15px; opacity: 0.7; transition: transform 0.13s; flex-shrink: 0; }
+    .link-card.clickable:hover .arrow { transform: translateX(3px); opacity: 1; }
+    .card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .btn-icon { background: none; border: 1.5px solid var(--blush); border-radius: 8px; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all 0.15s; color: var(--text-soft); }
+    .btn-icon:hover { border-color: var(--dusty-rose); background: var(--blush); }
+    .btn-icon.del:hover { border-color: #e07060; background: #fdecea; color: #c04030; }
+    .add-btn { display: flex; align-items: center; gap: 9px; background: none; border: 1.5px dashed var(--blush); border-radius: 13px; padding: 13px 16px; cursor: pointer; color: var(--text-soft); font-family: 'DM Sans', sans-serif; font-size: 13px; width: 100%; transition: all 0.15s; margin-top: 4px; }
+    .add-btn:hover { border-color: var(--dusty-rose); color: var(--terracotta); background: rgba(192,122,104,0.04); }
+    .add-cat-btn { display: flex; align-items: center; gap: 9px; background: none; border: 1.5px dashed var(--dusty-rose); border-radius: 13px; padding: 16px 20px; cursor: pointer; color: var(--terracotta); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; width: 100%; transition: all 0.15s; margin-bottom: 40px; }
+    .add-cat-btn:hover { background: rgba(192,122,104,0.06); }
+    .empty-cat { font-size: 13px; color: var(--text-soft); opacity: 0.6; padding: 10px 4px; font-style: italic; }
+    /* Admin bar */
+    .admin-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1.5px solid var(--blush); padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; z-index: 100; box-shadow: 0 -4px 20px rgba(109,76,59,0.08); gap: 12px; }
+    .admin-status { font-size: 13px; color: var(--text-soft); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #7a9a68; flex-shrink: 0; }
+    .admin-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .btn { padding: 8px 16px; border-radius: 20px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid; transition: all 0.15s; white-space: nowrap; }
+    .btn-outline { background: none; border-color: var(--blush); color: var(--text-soft); }
+    .btn-outline:hover { border-color: var(--dusty-rose); color: var(--terracotta); }
+    .btn-primary { background: var(--terracotta); border-color: var(--terracotta); color: white; }
+    .btn-primary:hover { background: var(--brown); border-color: var(--brown); }
+    .btn-lock { background: none; border-color: var(--blush); color: var(--text-soft); }
+    .btn-lock:hover { border-color: var(--sage-light); background: var(--sage-light); color: var(--brown); }
+    .btn-sage { background: none; border-color: var(--sage-light); color: #5a7a50; }
+    .btn-sage:hover { background: var(--sage-light); }
+    .btn-danger { background: #c04030; border-color: #c04030; color: white; }
+    .btn-danger:hover { background: #a03020; border-color: #a03020; }
+    /* Modals */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(61,43,34,0.35); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal { background: var(--warm-white); border-radius: 20px; padding: 32px; max-width: 480px; width: 100%; box-shadow: 0 20px 60px rgba(61,43,34,0.18); max-height: 90vh; overflow-y: auto; }
+    .modal h3 { font-family: 'Lora', serif; font-size: 1.2rem; font-weight: 500; color: var(--brown); margin-bottom: 8px; }
+    .modal-subtitle { font-size: 13px; color: var(--text-soft); margin-bottom: 24px; line-height: 1.5; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 12px; font-weight: 500; color: var(--text-soft); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .field input, .field textarea, .field select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--blush); border-radius: 10px; background: white; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; transition: border-color 0.15s; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--dusty-rose); }
+    .field textarea { resize: vertical; min-height: 70px; }
+    .field-hint { font-size: 12px; color: var(--text-soft); margin-top: 8px; }
+    .opt-label { font-size: 11px; opacity: 0.6; font-weight: 300; text-transform: none; letter-spacing: 0; }
+    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+    .error-msg { color: #c04030; font-size: 13px; margin-top: 8px; }
+    .success-msg { color: #5a7a50; font-size: 13px; margin-top: 8px; }
+    .confirm-text { font-size: 14px; color: var(--text-soft); line-height: 1.6; margin-bottom: 20px; }
+    .confirm-text strong { color: var(--text); }
+    /* Backup panel */
+    .backup-panel { background: var(--warm-white); border: 1.5px solid var(--blush); border-radius: 16px; padding: 24px; margin-bottom: 40px; }
+    .backup-panel h4 { font-family: 'Lora', serif; font-size: 1rem; font-weight: 500; color: var(--brown); margin-bottom: 6px; }
+    .backup-panel p { font-size: 13px; color: var(--text-soft); line-height: 1.6; margin-bottom: 16px; }
+    .backup-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .import-drop { border: 1.5px dashed var(--blush); border-radius: 10px; padding: 20px; text-align: center; font-size: 13px; color: var(--text-soft); cursor: pointer; transition: all 0.15s; margin-top: 12px; }
+    .import-drop:hover { border-color: var(--dusty-rose); color: var(--terracotta); background: rgba(192,122,104,0.03); }
+    .no-results { text-align: center; color: var(--text-soft); font-size: 15px; padding: 48px; }
+    footer { text-align: center; margin-top: 60px; padding-top: 28px; border-top: 1px solid var(--blush); color: var(--text-soft); font-size: 13px; font-weight: 300; padding-bottom: 80px; }
+    @media (max-width: 600px) { .page { padding: 36px 16px 100px; } .admin-bar { padding: 10px 16px; } .admin-status span { display: none; } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <input type="file" id="import-file" accept=".json" style="display:none" />
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const ADMIN_PASSWORD = "kaseyandmeaghan2026";
+    const LINKS_KEY = "rb_links_v3";
+    const CATS_KEY  = "rb_cats_v3";
+
+    const DEFAULT_CATS = [
+      { id: "substances", label: "Pregnancy While Using Substances",                icon: "🌿", color: "#c07a68", bg: "#fce8e0", desc: "Resources on harm reduction, treatment, and support during pregnancy" },
+      { id: "body",       label: "Body Changes in Pregnancy & Postpartum",          icon: "🌸", color: "#c47a9a", bg: "#fde8f0", desc: "Understanding and navigating the physical changes of pregnancy and postpartum" },
+      { id: "eds",        label: "Eating Disorders in Pregnancy & Postpartum",      icon: "🍵", color: "#c4a468", bg: "#fdf0e0", desc: "Support and information for anyone navigating eating disorders during the perinatal period" },
+      { id: "trauma",     label: "Trauma-Informed Approaches to Perinatal Support", icon: "🍃", color: "#7a9a68", bg: "#e8f0e0", desc: "Frameworks and tools for compassionate, trauma-aware perinatal care" },
+      { id: "equity",     label: "Gender Equity & Reproductive Justice",            icon: "✊", color: "#7a7ac4", bg: "#e8eaf8", desc: "Advocacy, rights, and frameworks for equitable perinatal care" },
+      { id: "hamilton",   label: "Support in Hamilton",                             icon: "🏡", color: "#6a9aa8", bg: "#e0f0f4", desc: "Local organizations and community resources in Hamilton" },
+    ];
+
+    const ICONS  = ["🌿","🌸","🍃","✊","🏡","💛","🌻","🤝","📚","💬","🧠","🌱","❤️","🫶","🩺","🌈","🕊️","🌺","💙","🍵","🫁","🤱","👶","🧘"];
+    const COLORS = [
+      { color:"#c07a68", bg:"#fce8e0" }, { color:"#c47a9a", bg:"#fde8f0" },
+      { color:"#7a9a68", bg:"#e8f0e0" }, { color:"#7a7ac4", bg:"#e8eaf8" },
+      { color:"#c4a468", bg:"#fdf0e0" }, { color:"#6a9aa8", bg:"#e0f0f4" },
+      { color:"#a868c4", bg:"#f0e0f8" }, { color:"#689aa8", bg:"#e0f4f0" },
+    ];
+
+    const genId = () => Math.random().toString(36).substr(2,9);
+    const load  = (key, fb) => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fb; } catch { return fb; } };
+    const save  = (key, v)  => { try { localStorage.setItem(key, JSON.stringify(v)); } catch {} };
+
+    function App() {
+      const [cats,  setCats]  = useState(() => load(CATS_KEY,  DEFAULT_CATS));
+      const [links, setLinks] = useState(() => load(LINKS_KEY, []));
+      const [activeCategory, setActiveCategory] = useState("all");
+      const [search, setSearch] = useState("");
+      const [isAdmin, setIsAdmin] = useState(false);
+
+      const [showLogin,     setShowLogin]     = useState(false);
+      const [showLinkModal, setShowLinkModal] = useState(false);
+      const [showCatModal,  setShowCatModal]  = useState(false);
+      const [showConfirm,   setShowConfirm]   = useState(null);
+      const [showBackup,    setShowBackup]    = useState(false);
+      const [importMsg,     setImportMsg]     = useState("");
+
+      const [editingLink, setEditingLink] = useState(null);
+      const [editingCat,  setEditingCat]  = useState(null);
+      const [loginPw,  setLoginPw]  = useState("");
+      const [loginErr, setLoginErr] = useState("");
+      const [linkForm, setLinkForm] = useState({ title:"", desc:"", url:"", category:"" });
+      const [catForm,  setCatForm]  = useState({ label:"", desc:"", icon:"🌿", color:"#c07a68", bg:"#fce8e0" });
+
+      useEffect(() => save(LINKS_KEY, links), [links]);
+      useEffect(() => save(CATS_KEY,  cats),  [cats]);
+
+      // ── Auth ──────────────────────────────────────────────
+      const handleLogin = () => {
+        if (loginPw === ADMIN_PASSWORD) { setIsAdmin(true); setShowLogin(false); setLoginPw(""); setLoginErr(""); }
+        else setLoginErr("Incorrect password. Try again.");
+      };
+
+      // ── Export ────────────────────────────────────────────
+      const handleExport = () => {
+        const data = { cats, links, exportedAt: new Date().toISOString() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement("a");
+        a.href     = url;
+        a.download = `resource-bank-backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      // ── Import ────────────────────────────────────────────
+      const handleImportClick = () => {
+        setImportMsg("");
+        const input = document.getElementById("import-file");
+        input.value = "";
+        input.onchange = (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            try {
+              const data = JSON.parse(ev.target.result);
+              if (!data.cats || !data.links) throw new Error("Invalid file");
+              setCats(data.cats);
+              setLinks(data.links);
+              setImportMsg("✓ Backup restored successfully!");
+              setTimeout(() => setImportMsg(""), 4000);
+            } catch {
+              setImportMsg("✗ Couldn't read that file. Make sure it's a backup from this resource bank.");
+            }
+          };
+          reader.readAsText(file);
+        };
+        input.click();
+      };
+
+      // ── Links ─────────────────────────────────────────────
+      const openAddLink  = (catId) => { setEditingLink(null); setLinkForm({ title:"", desc:"", url:"", category:catId }); setShowLinkModal(true); };
+      const openEditLink = (link)  => { setEditingLink(link); setLinkForm({ title:link.title, desc:link.desc, url:link.url, category:link.category }); setShowLinkModal(true); };
+      const saveLink = () => {
+        if (!linkForm.title.trim() || !linkForm.url.trim() || !linkForm.category) return;
+        if (editingLink) setLinks(links.map(l => l.id === editingLink.id ? { ...l, ...linkForm } : l));
+        else             setLinks([...links, { id:genId(), ...linkForm }]);
+        setShowLinkModal(false);
+      };
+      const deleteLink = (id) => { setLinks(links.filter(l => l.id !== id)); setShowConfirm(null); };
+
+      // ── Categories ────────────────────────────────────────
+      const openAddCat  = ()    => { setEditingCat(null); setCatForm({ label:"", desc:"", icon:"🌿", color:"#c07a68", bg:"#fce8e0" }); setShowCatModal(true); };
+      const openEditCat = (cat) => { setEditingCat(cat);  setCatForm({ label:cat.label, desc:cat.desc, icon:cat.icon, color:cat.color, bg:cat.bg }); setShowCatModal(true); };
+      const saveCat = () => {
+        if (!catForm.label.trim()) return;
+        if (editingCat) setCats(cats.map(c => c.id === editingCat.id ? { ...c, ...catForm } : c));
+        else            setCats([...cats, { id:genId(), ...catForm }]);
+        setShowCatModal(false);
+      };
+      const deleteCat = (id) => {
+        setCats(cats.filter(c => c.id !== id));
+        setLinks(links.filter(l => l.category !== id));
+        if (activeCategory === id) setActiveCategory("all");
+        setShowConfirm(null);
+      };
+
+      const filtered = links.filter(l => {
+        const matchCat = activeCategory === "all" || l.category === activeCategory;
+        const q = search.toLowerCase();
+        return matchCat && (!q || l.title.toLowerCase().includes(q) || l.desc.toLowerCase().includes(q));
+      });
+
+      const confirmTarget = showConfirm
+        ? (showConfirm.type === "link" ? links.find(l => l.id === showConfirm.id) : cats.find(c => c.id === showConfirm.id))
+        : null;
+
+      return (
+        <>
+          <div className="page">
+            <header className="header">
+              <div className="tag">Resource Bank</div>
+              <h1 className="h1">Pregnancy & <em>Perinatal</em> Support</h1>
+              <p className="subtitle">A curated collection of resources for care providers and the people they support.</p>
+              <div className="divider" />
+            </header>
+
+            <div className="search-wrap">
+              <input className="search" type="text" placeholder="Search resources…"
+                value={search} onChange={e => setSearch(e.target.value)} />
+            </div>
+
+            <div className="pills">
+              <button className={`pill ${activeCategory === "all" ? "all-active" : ""}`} onClick={() => setActiveCategory("all")}>All</button>
+              {cats.map(cat => (
+                <button key={cat.id} className={`pill ${activeCategory === cat.id ? "active" : ""}`}
+                  onClick={() => setActiveCategory(cat.id)}>{cat.label}</button>
+              ))}
+            </div>
+
+            {/* Backup panel (admin only) */}
+            {isAdmin && showBackup && (
+              <div className="backup-panel">
+                <h4>💾 Backup & Restore</h4>
+                <p>Export saves all your categories and resources to a file on your computer. Import restores them on any new host — just upload the backup file.</p>
+                <div className="backup-btns">
+                  <button className="btn btn-sage" onClick={handleExport}>⬇ Export backup</button>
+                  <button className="btn btn-outline" onClick={handleImportClick}>⬆ Import backup</button>
+                </div>
+                {importMsg && (
+                  <div className={importMsg.startsWith("✓") ? "success-msg" : "error-msg"} style={{ marginTop:12 }}>{importMsg}</div>
+                )}
+              </div>
+            )}
+
+            {isAdmin && (
+              <button className="add-cat-btn" onClick={openAddCat}>
+                <span style={{ fontSize:18 }}>+</span> Add a new category
+              </button>
+            )}
+
+            {cats.map(cat => {
+              if (activeCategory !== "all" && cat.id !== activeCategory) return null;
+              const catLinks = filtered.filter(l => l.category === cat.id);
+              if (catLinks.length === 0 && !isAdmin) return null;
+              return (
+                <div className="section" key={cat.id}>
+                  <div className="section-head">
+                    <div className="section-head-left">
+                      <div className="icon-wrap" style={{ background:cat.bg }}>{cat.icon}</div>
+                      <div>
+                        <div className="section-title">{cat.label}</div>
+                        {cat.desc && <div className="section-desc">{cat.desc}</div>}
+                      </div>
+                    </div>
+                    {isAdmin && (
+                      <div className="section-actions">
+                        <button className="btn-icon" onClick={() => openEditCat(cat)}>✏️</button>
+                        <button className="btn-icon del" onClick={() => setShowConfirm({ type:"cat", id:cat.id })}>🗑</button>
+                      </div>
+                    )}
+                  </div>
+                  <div className="link-grid">
+                    {catLinks.length === 0 && isAdmin && <div className="empty-cat">No resources yet — add one below.</div>}
+                    {catLinks.map(link => (
+                      <div key={link.id} className={`link-card${!isAdmin ? " clickable" : ""}`}
+                        onClick={!isAdmin ? () => window.open(link.url, "_blank") : undefined}>
+                        <div className="dot" style={{ background:cat.color }} />
+                        <div className="link-body">
+                          <div className="link-title">{link.title}</div>
+                          {link.desc && <div className="link-desc">{link.desc}</div>}
+                        </div>
+                        {isAdmin ? (
+                          <div className="card-actions">
+                            <button className="btn-icon" onClick={() => openEditLink(link)}>✏️</button>
+                            <button className="btn-icon del" onClick={() => setShowConfirm({ type:"link", id:link.id })}>🗑</button>
+                          </div>
+                        ) : <div className="arrow">→</div>}
+                      </div>
+                    ))}
+                    {isAdmin && (
+                      <button className="add-btn" onClick={() => openAddLink(cat.id)}>
+                        <span style={{ fontSize:18, color:"#c07a68" }}>+</span> Add a resource
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+            {filtered.length === 0 && search && (
+              <div className="no-results">No resources found for that search.</div>
+            )}
+
+            <footer><p>A resource for perinatal care providers in Hamilton & beyond.</p></footer>
+          </div>
+
+          {/* Admin bar */}
+          <div className="admin-bar">
+            <div className="admin-status">
+              {isAdmin
+                ? <><div className="status-dot" /><span>Edit mode</span></>
+                : <span style={{ opacity:0.5 }}>Viewing resource bank</span>}
+            </div>
+            <div className="admin-btns">
+              {isAdmin ? (
+                <>
+                  <button className="btn btn-sage" onClick={() => setShowBackup(v => !v)}>
+                    {showBackup ? "Hide backup" : "💾 Backup"}
+                  </button>
+                  <button className="btn btn-lock" onClick={() => { setIsAdmin(false); setShowBackup(false); }}>🔒 Lock</button>
+                </>
+              ) : (
+                <button className="btn btn-primary" onClick={() => setShowLogin(true)}>Edit resources</button>
+              )}
+            </div>
+          </div>
+
+          {/* Login modal */}
+          {showLogin && (
+            <div className="modal-overlay" onClick={() => { setShowLogin(false); setLoginErr(""); }}>
+              <div className="modal" onClick={e => e.stopPropagation()}>
+                <h3>Edit Mode</h3>
+                <div className="field">
+                  <label>Password</label>
+                  <input type="password" placeholder="Enter password" value={loginPw} autoFocus
+                    onChange={e => setLoginPw(e.target.value)} onKeyDown={e => e.key==="Enter" && handleLogin()} />
+                  {loginErr && <div className="error-msg">{loginErr}</div>}
+                </div>
+                <div className="modal-btns">
+                  <button className="btn btn-outline" onClick={() => { setShowLogin(false); setLoginErr(""); }}>Cancel</button>
+                  <button className="btn btn-primary" onClick={handleLogin}>Unlock</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Link modal */}
+          {showLinkModal && (
+            <div className="modal-overlay" onClick={() => setShowLinkModal(false)}>
+              <div className="modal" onClick={e => e.stopPropagation()}>
+                <h3>{editingLink ? "Edit Resource" : "Add Resource"}</h3>
+                <div className="field">
+                  <label>Title</label>
+                  <input type="text" placeholder="e.g. CAMH — Perinatal Substance Use" autoFocus
+                    value={linkForm.title} onChange={e => setLinkForm({...linkForm, title:e.target.value})} />
+                </div>
+                <div className="field">
+                  <label>Description <span className="opt-label">(optional)</span></label>
+                  <textarea placeholder="A brief description of what this resource offers…"
+                    value={linkForm.desc} onChange={e => setLinkForm({...linkForm, desc:e.target.value})} />
+                </div>
+                <div className="field">
+                  <label>URL</label>
+                  <input type="url" placeholder="https://…"
+                    value={linkForm.url} onChange={e => setLinkForm({...linkForm, url:e.target.value})} />
+                </div>
+                <div className="field">
+                  <label>Category</label>
+                  <select value={linkForm.category} onChange={e => setLinkForm({...linkForm, category:e.target.value})}>
+                    <option value="">Select a category…</option>
+                    {cats.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
+                  </select>
+                </div>
+                <div className="modal-btns">
+                  <button className="btn btn-outline" onClick={() => setShowLinkModal(false)}>Cancel</button>
+                  <button className="btn btn-primary" onClick={saveLink}
+                    disabled={!linkForm.title.trim() || !linkForm.url.trim() || !linkForm.category}>
+                    {editingLink ? "Save changes" : "Add resource"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Category modal */}
+          {showCatModal && (
+            <div className="modal-overlay" onClick={() => setShowCatModal(false)}>
+              <div className="modal" onClick={e => e.stopPropagation()}>
+                <h3>{editingCat ? "Edit Category" : "New Category"}</h3>
+                <div className="field">
+                  <label>Category name</label>
+                  <input type="text" placeholder="e.g. Mental Health & Wellbeing" autoFocus
+                    value={catForm.label} onChange={e => setCatForm({...catForm, label:e.target.value})} />
+                </div>
+                <div className="field">
+                  <label>Description <span className="opt-label">(optional)</span></label>
+                  <input type="text" placeholder="A short subtitle shown under the category name"
+                    value={catForm.desc} onChange={e => setCatForm({...catForm, desc:e.target.value})} />
+                </div>
+                <div className="field">
+                  <label>Icon</label>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:7, marginTop:4 }}>
+                    {ICONS.map(icon => (
+                      <button key={icon} onClick={() => setCatForm({...catForm, icon})}
+                        style={{ width:38, height:38, border:`2px solid ${catForm.icon===icon?"var(--terracotta)":"var(--blush)"}`, borderRadius:8, background:catForm.icon===icon?"var(--blush)":"white", fontSize:18, cursor:"pointer", transition:"all 0.12s" }}>
+                        {icon}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="field">
+                  <label>Colour</label>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginTop:4 }}>
+                    {COLORS.map(opt => (
+                      <button key={opt.color} onClick={() => setCatForm({...catForm, color:opt.color, bg:opt.bg})}
+                        style={{ width:32, height:32, borderRadius:"50%", background:opt.color, border:`3px solid ${catForm.color===opt.color?"var(--brown)":"transparent"}`, cursor:"pointer", transition:"all 0.12s" }} />
+                    ))}
+                  </div>
+                  <div className="field-hint">
+                    Preview:&nbsp;
+                    <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:catForm.bg, padding:"3px 10px", borderRadius:8, fontSize:13 }}>
+                      <span>{catForm.icon}</span>
+                      <span style={{ color:catForm.color, fontWeight:500 }}>{catForm.label || "Category name"}</span>
+                    </span>
+                  </div>
+                </div>
+                <div className="modal-btns">
+                  <button className="btn btn-outline" onClick={() => setShowCatModal(false)}>Cancel</button>
+                  <button className="btn btn-primary" onClick={saveCat} disabled={!catForm.label.trim()}>
+                    {editingCat ? "Save changes" : "Add category"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Confirm delete */}
+          {showConfirm && confirmTarget && (
+            <div className="modal-overlay" onClick={() => setShowConfirm(null)}>
+              <div className="modal" onClick={e => e.stopPropagation()}>
+                <h3>Are you sure?</h3>
+                <p className="confirm-text">
+                  {showConfirm.type === "cat"
+                    ? <>This will permanently delete <strong>"{confirmTarget.label}"</strong> and all its resources.</>
+                    : <>This will permanently delete <strong>"{confirmTarget.title}"</strong>.</>}
+                </p>
+                <div className="modal-btns">
+                  <button className="btn btn-outline" onClick={() => setShowConfirm(null)}>Cancel</button>
+                  <button className="btn btn-danger"
+                    onClick={() => showConfirm.type === "cat" ? deleteCat(showConfirm.id) : deleteLink(showConfirm.id)}>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
